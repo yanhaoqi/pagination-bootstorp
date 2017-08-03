@@ -9,18 +9,19 @@
 
 </head>
 <body>
-    <div class="test" pagination="pagination_new" pagenumber="5" totalnumber="15"></div>
+    <div class="test" pagination="pagination_new" pagenumber="5" totalnumber="15" paginationmax="10"></div>
 
 <script>
     $(function(){
-//        分页栏最大显示页数
-        var paginationMaxNum = 10;
-//        只有1页是否显示
-        var isOnePageShow = true;
+        paginationInit();
         function initPagination(element){
-            var pagenumber = element.attr('pagenumber');
-            var totalnumber = element.attr('totalnumber');
-            if(1){
+//            当前页数
+            var pagenumber = Number(element.attr('pagenumber'));
+//            总页数
+            var totalnumber = Number(element.attr('totalnumber'));
+//            分页栏显示的页数
+            var paginationmax = Number(element.attr('paginationmax'));
+            if(totalnumber >= 1 && pagenumber <= totalnumber && paginationmax <= totalnumber){
                 var content =
                     "<ul class='pagination'>" +
                         "<li>" +
@@ -28,7 +29,7 @@
                         "</li>";
                 for (var i = 0; i < totalnumber; i++) {
                     content +=
-                        "<li>" +
+                        "<li value='"+ (i + 1) +"'>" +
                             "<a href='javascript:void(0);'>" + (i + 1) +
                             "</a>" +
                         "</li>"
@@ -39,8 +40,13 @@
                         "</li>" +
                     "</ul>";
                 element.append(content);
+//                为设置为当前页的页签添加样式
+                element.children('ul').children('li[value = '+ pagenumber +']').addClass('active');
+            }else{
+                console.log('分页自定义属性不合理')
             }
         }
+//        凡是带有pagination = pagination_new属性的元素，都会生成分页，这样设计方便一个页面中有多个不同的分页
         function paginationInit(){
             $('[pagination = pagination_new]').each(function(){
                 initPagination($(this))
