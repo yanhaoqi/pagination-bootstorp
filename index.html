@@ -3,18 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <!--cdn引入bootstrap css样式-->
-    <link href="https://cdn.bootcss.com/bootstrap/4.0.0-alpha.6/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
     <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 </head>
 <body>
-    <h1>123</h1>
+    <div class="test" pagination="pagination_new" pagenumber="5" totalnumber="15"></div>
 
 <script>
     $(function(){
-
+//        分页栏最大显示页数
+        var paginationMaxNum = 10;
+//        只有1页是否显示
+        var isOnePageShow = true;
+        function initPagination(element){
+            var pagenumber = element.attr('pagenumber');
+            var totalnumber = element.attr('totalnumber');
+            if(1){
+                var content =
+                    "<ul class='pagination'>" +
+                        "<li>" +
+                            "<a href='javascript:void(0);'>«</a>" +
+                        "</li>";
+                for (var i = 0; i < totalnumber; i++) {
+                    content +=
+                        "<li>" +
+                            "<a href='javascript:void(0);'>" + (i + 1) +
+                            "</a>" +
+                        "</li>"
+                }
+                content +=
+                        "<li>" +
+                            "<a href='javascript:void(0);'>»</a>" +
+                        "</li>" +
+                    "</ul>";
+                element.append(content);
+            }
+        }
+        function paginationInit(){
+            $('[pagination = pagination_new]').each(function(){
+                initPagination($(this))
+            })
+        };
     })
 </script>
 </body>
