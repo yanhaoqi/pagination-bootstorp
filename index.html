@@ -13,16 +13,16 @@
 
 <script>
     $(function(){
+        //当前页数
         var pagenumber;
+        //总页数
         var totalnumber;
+        //分页栏显示的页数
         var paginationmax;
         paginationInit();
         function initPagination(element){
-//            当前页数
             pagenumber = Number(element.attr('pagenumber'));
-//            总页数
             totalnumber = Number(element.attr('totalnumber'));
-//            分页栏显示的页数
             paginationmax = Number(element.attr('paginationmax'));
             if(totalnumber >= 1 && pagenumber <= totalnumber && paginationmax <= totalnumber){
                 var content =
@@ -45,7 +45,8 @@
                 element.append(content);
 //                为设置为当前页的页签添加样式
                 element.children('ul').children('li[value = '+ pagenumber +']').addClass('active');
-                element.children('ul').children('li').click(clickChange)
+                element.children('ul').children('li').click(clickChange);
+                element.children('ul').children('li').click(processData);
             }else{
                 console.log('分页自定义属性不合理')
             }
@@ -63,35 +64,43 @@
             $(ev.target).parent().parent().children('li').each(function(index,item){
                 if($(item).hasClass('active')){
                     $(item).removeClass('active');
-                    temp = Number($(item).attr('value'))
                 }
             });
 //                点击页码页签
             if($(ev.target).parent().attr('value') != 'pre' && $(ev.target).parent().attr('value') != 'next'){
+                pagenumber = Number($(ev.target).parent().attr('value'))
                 $(ev.target).parent().addClass('active');
                 $(ev.target).parent().parent().children('li[value = pre]').removeClass('disabled');
                 $(ev.target).parent().parent().children('li[value = next]').removeClass('disabled');
 //                点击上一页页签
             }else if($(ev.target).parent().attr('value') == 'pre'){
-                if(temp <= 2){
-                    temp = 2;
+                pagenumber -= 1;
+                if(pagenumber <= 1){
+                    pagenumber = 1;
                     $(ev.target).parent().parent().children('li[value = 1]').addClass('active');
                     $(ev.target).parent().parent().children('li[value = pre]').addClass('disabled');
                 }else{
-                    $(ev.target).parent().parent().children('li[value = '+ (temp - 1).toString() +']').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = '+ pagenumber.toString() +']').addClass('active');
                     $(ev.target).parent().parent().children('li[value = pre]').removeClass('disabled');
+                    $(ev.target).parent().parent().children('li[value = next]').removeClass('disabled');
                 }
 //                点击下一页页签
             }else if($(ev.target).parent().attr('value') == 'next'){
-                if(temp >= totalnumber-1){
-                    temp = totalnumber - 1;
+                pagenumber += 1;
+                if(pagenumber >= totalnumber){
+                    pagenumber = totalnumber;
                     $(ev.target).parent().parent().children('li[value = '+ totalnumber +']').addClass('active');
                     $(ev.target).parent().parent().children('li[value = next]').addClass('disabled');
                 }else{
-                    $(ev.target).parent().parent().children('li[value = '+ (temp + 1).toString() +']').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = '+ pagenumber.toString() +']').addClass('active');
                     $(ev.target).parent().parent().children('li[value = next]').removeClass('disabled');
+                    $(ev.target).parent().parent().children('li[value = pre]').removeClass('disabled');
                 }
             }
+        }
+//      页面切换时候的处理函数。比如发ajax根据不同页码获取不同数据展示数据等，用户自行配置。
+        function processData(){
+            console.log('当前页码',pagenumber)
         }
     })
 </script>
