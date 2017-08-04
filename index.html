@@ -13,18 +13,21 @@
 
 <script>
     $(function(){
+        var pagenumber;
+        var totalnumber;
+        var paginationmax;
         paginationInit();
         function initPagination(element){
 //            当前页数
-            var pagenumber = Number(element.attr('pagenumber'));
+            pagenumber = Number(element.attr('pagenumber'));
 //            总页数
-            var totalnumber = Number(element.attr('totalnumber'));
+            totalnumber = Number(element.attr('totalnumber'));
 //            分页栏显示的页数
-            var paginationmax = Number(element.attr('paginationmax'));
+            paginationmax = Number(element.attr('paginationmax'));
             if(totalnumber >= 1 && pagenumber <= totalnumber && paginationmax <= totalnumber){
                 var content =
                     "<ul class='pagination'>" +
-                        "<li>" +
+                        "<li value='pre'>" +
                             "<a href='javascript:void(0);'>«</a>" +
                         "</li>";
                 for (var i = 0; i < totalnumber; i++) {
@@ -35,23 +38,61 @@
                         "</li>"
                 }
                 content +=
-                        "<li>" +
+                        "<li value='next'>" +
                             "<a href='javascript:void(0);'>»</a>" +
                         "</li>" +
                     "</ul>";
                 element.append(content);
 //                为设置为当前页的页签添加样式
                 element.children('ul').children('li[value = '+ pagenumber +']').addClass('active');
+                element.children('ul').children('li').click(clickChange)
             }else{
                 console.log('分页自定义属性不合理')
             }
-        }
+        };
 //        凡是带有pagination = pagination_new属性的元素，都会生成分页，这样设计方便一个页面中有多个不同的分页
         function paginationInit(){
             $('[pagination = pagination_new]').each(function(){
                 initPagination($(this))
             })
         };
+//        点击页签时候样式的变化
+        function clickChange(ev){
+            ev = event || window.event;
+            var temp;
+            $(ev.target).parent().parent().children('li').each(function(index,item){
+                if($(item).hasClass('active')){
+                    $(item).removeClass('active');
+                    temp = Number($(item).attr('value'))
+                }
+            });
+//                点击页码页签
+            if($(ev.target).parent().attr('value') != 'pre' && $(ev.target).parent().attr('value') != 'next'){
+                $(ev.target).parent().addClass('active');
+                $(ev.target).parent().parent().children('li[value = pre]').removeClass('disabled');
+                $(ev.target).parent().parent().children('li[value = next]').removeClass('disabled');
+//                点击上一页页签
+            }else if($(ev.target).parent().attr('value') == 'pre'){
+                if(temp <= 2){
+                    temp = 2;
+                    $(ev.target).parent().parent().children('li[value = 1]').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = pre]').addClass('disabled');
+                }else{
+                    $(ev.target).parent().parent().children('li[value = '+ (temp - 1).toString() +']').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = pre]').removeClass('disabled');
+                }
+//                点击下一页页签
+            }else if($(ev.target).parent().attr('value') == 'next'){
+                if(temp >= totalnumber-1){
+                    temp = totalnumber - 1;
+                    $(ev.target).parent().parent().children('li[value = '+ totalnumber +']').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = next]').addClass('disabled');
+                }else{
+                    $(ev.target).parent().parent().children('li[value = '+ (temp + 1).toString() +']').addClass('active');
+                    $(ev.target).parent().parent().children('li[value = next]').removeClass('disabled');
+                }
+            }
+        }
     })
 </script>
 </body>
